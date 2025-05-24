@@ -185,4 +185,24 @@ public class Perpustakaan {
         Logger.log("Anggota \"" + anggota.getNama() + "\" berhasil dihapus.");
         return true;
     }
+
+    public List<Mahasiswa> getSemuaMahasiswa() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getSemuaMahasiswa'");
+    }
+
+    public boolean hapusMahasiswa(String idMahasiswa) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'hapusMahasiswa'");
+    }
+
+    public Object cariMahasiswaById(String id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'cariMahasiswaById'");
+    }
+
+    public void registrasiMahasiswa(Mahasiswa mahasiswaBaru) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'registrasiMahasiswa'");
+    }
 }
