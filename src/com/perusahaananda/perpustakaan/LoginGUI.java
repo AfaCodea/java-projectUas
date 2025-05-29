@@ -8,7 +8,7 @@ public class LoginGUI extends JFrame {
     private JTextField usernameField;
     private JPasswordField passwordField;
     private JButton loginButton;
-    private JButton cancelButton;
+    private JButton keluarButton;
 
     public LoginGUI() {
         // Set up the frame
@@ -61,14 +61,14 @@ public class LoginGUI extends JFrame {
         // Button panel
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 0));
         loginButton = new JButton("Login");
-        cancelButton = new JButton("Cancel");
+        keluarButton = new JButton("Keluar");
 
         // Style buttons
         loginButton.setPreferredSize(new Dimension(100, 30));
-        cancelButton.setPreferredSize(new Dimension(100, 30));
+        keluarButton.setPreferredSize(new Dimension(100, 30));
 
         buttonPanel.add(loginButton);
-        buttonPanel.add(cancelButton);
+        buttonPanel.add(keluarButton);
 
         // Add form and button panels to main panel
         mainPanel.add(formPanel, BorderLayout.CENTER);
@@ -79,7 +79,7 @@ public class LoginGUI extends JFrame {
 
         // Add action listeners
         loginButton.addActionListener(e -> handleLogin());
-        cancelButton.addActionListener(e -> System.exit(0));
+        keluarButton.addActionListener(e -> System.exit(0));
 
         // Add enter key listener to password field
         passwordField.addKeyListener(new KeyAdapter() {
