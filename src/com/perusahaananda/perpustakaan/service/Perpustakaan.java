@@ -139,7 +139,7 @@ public class Perpustakaan {
         if (!buku.isTersedia() && buku instanceof DapatDipinjam) {
             DapatDipinjam itemDikembalikan = (DapatDipinjam) buku;
             for (Peminjaman p : daftarPeminjaman) {
-                if (p.getBuku().equals(buku) && p.getTanggalKembaliAktual() == null) {
+                if (p.getBuku().getIsbn().equals(buku.getIsbn()) && p.getTanggalKembaliAktual() == null) {
                     p.setTanggalKembaliAktual(LocalDate.now());
                     break;
                 }
@@ -187,18 +187,24 @@ public class Perpustakaan {
     }
 
     public List<Mahasiswa> getSemuaMahasiswa() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getSemuaMahasiswa'");
+        return new ArrayList<>(daftarAnggota);
     }
 
     public boolean hapusMahasiswa(String idMahasiswa) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'hapusMahasiswa'");
+        Mahasiswa mahasiswa = cariMahasiswaById(idMahasiswa);
+        if (mahasiswa == null) {
+            return false;
+        }
+        return daftarAnggota.remove(mahasiswa);
     }
 
-    public Object cariMahasiswaById(String id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'cariMahasiswaById'");
+    public Mahasiswa cariMahasiswaById(String id) {
+        for (Mahasiswa mahasiswa : daftarAnggota) {
+            if (mahasiswa.getIdAnggota().equals(id)) {
+                return mahasiswa;
+            }
+        }
+        return null;
     }
 
     public void registrasiMahasiswa(Mahasiswa mahasiswaBaru) {
