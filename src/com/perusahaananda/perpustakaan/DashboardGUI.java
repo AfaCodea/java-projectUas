@@ -50,6 +50,33 @@ public class DashboardGUI extends JFrame {
         // Create main panel with BorderLayout
         mainPanel = new JPanel(new BorderLayout());
         
+        // Create menu bar
+        JMenuBar menuBar = new JMenuBar();
+        
+        // File Menu
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem exitMenuItem = new JMenuItem("Keluar");
+        exitMenuItem.addActionListener(e -> System.exit(0));
+        fileMenu.add(exitMenuItem);
+        menuBar.add(fileMenu);
+        
+        // About Menu
+        JMenu aboutMenu = new JMenu("About");
+        JMenuItem aboutMenuItem = new JMenuItem("Tentang Aplikasi");
+        aboutMenuItem.addActionListener(e -> {
+            JOptionPane.showMessageDialog(this,
+                "Sistem Perpustakaan v1.0\n\n" +
+                "Aplikasi ini dibuat untuk mengelola perpustakaan,\n" +
+                "termasuk manajemen buku, anggota, peminjaman,\n" +
+                "dan pengembalian buku.",
+                "Tentang Aplikasi",
+                JOptionPane.INFORMATION_MESSAGE);
+        });
+        aboutMenu.add(aboutMenuItem);
+        menuBar.add(aboutMenu);
+        
+        setJMenuBar(menuBar); // Set the menu bar
+        
         // Create sidebar
         createSidebar();
         
