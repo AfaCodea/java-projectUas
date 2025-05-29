@@ -1,7 +1,6 @@
 package com.perusahaananda.perpustakaan.model;
 
 import java.time.LocalDate;
-
 /**
  * 1. Class: Merepresentasikan transaksi peminjaman.
  * (Catatan: Dalam implementasi Buku saat ini, detail peminjaman sudah ada di Buku.

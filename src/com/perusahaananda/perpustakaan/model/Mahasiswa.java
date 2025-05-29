@@ -53,8 +53,7 @@ public class Mahasiswa {
         return nama + " (ID: " + idMahasiswa + ")";
     }
 
-    public Object getIdMahasiswa() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getIdMahasiswa'");
+    public String getIdMahasiswa() {
+        return idMahasiswa;
     }
 }
