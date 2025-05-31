@@ -23,7 +23,7 @@ public class PanelRiwayatTransaksi extends JPanel {
         setLayout(new BorderLayout(10, 10));
 
         // Panel Tabel Transaksi (Riwayat Peminjaman dan Pengembalian)
-        String[] columnNamesTransaksi = {"ISBN Buku", "Judul Buku", "ID Anggota", "Nama Anggota", "Tgl Pinjam", "Tgl Kembali Diharapkan", "Tgl Kembali Aktual"};
+        String[] columnNamesTransaksi = {"ISBN Buku", "Judul Buku", "ID Anggota", "Nama Anggota", "Tgl Pinjam", "Tgl Kembali Aktual"};
         tableModelTransaksi = new DefaultTableModel(columnNamesTransaksi, 0){
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -59,8 +59,7 @@ public class PanelRiwayatTransaksi extends JPanel {
             row.add(p.getAnggota().getIdAnggota());
             row.add(p.getAnggota().getNama());
             row.add(p.getTanggalPinjam().toString());
-            row.add(p.getTanggalKembaliDiharapkan() != null ? p.getTanggalKembaliDiharapkan().toString() : "N/A");
-            row.add(p.getTanggalKembaliAktual() != null ? p.getTanggalKembaliAktual().toString() : "Belum Dikembalikan"); // Add actual return date
+            row.add(p.getTanggalKembaliAktual() != null ? p.getTanggalKembaliAktual().toString() : "Belum Dikembalikan");
             tableModelTransaksi.addRow(row);
         }
     }

@@ -12,7 +12,7 @@ import java.util.Vector;
 public class PanelBuku extends JPanel {
     private Perpustakaan perpustakaan;
     private JTextField txtJudul, txtPengarang, txtIsbn;
-    private JButton btnTambah, btnRefresh, btnCari;
+    private JButton btnTambah, btnDelete;
     private JTable tabelBuku;
     private DefaultTableModel tableModel;
 
@@ -21,25 +21,33 @@ public class PanelBuku extends JPanel {
         setLayout(new BorderLayout(10, 10)); // Memberi sedikit jarak antar komponen
 
         // Panel Input
-        JPanel panelInput = new JPanel(new GridLayout(4, 2, 5, 5)); // baris, kolom, hgap, vgap
+        JPanel panelInput = new JPanel(new BorderLayout(5, 5));
         panelInput.setBorder(BorderFactory.createTitledBorder("Tambah/Cari Buku"));
 
-        panelInput.add(new JLabel("Judul:"));
+        // Panel untuk form input
+        JPanel formPanel = new JPanel(new GridLayout(3, 2, 5, 5));
+        formPanel.add(new JLabel("Judul:"));
         txtJudul = new JTextField();
-        panelInput.add(txtJudul);
+        formPanel.add(txtJudul);
 
-        panelInput.add(new JLabel("Pengarang:"));
+        formPanel.add(new JLabel("Pengarang:"));
         txtPengarang = new JTextField();
-        panelInput.add(txtPengarang);
+        formPanel.add(txtPengarang);
 
-        panelInput.add(new JLabel("ISBN:"));
+        formPanel.add(new JLabel("ISBN:"));
         txtIsbn = new JTextField();
-        panelInput.add(txtIsbn);
+        formPanel.add(txtIsbn);
 
+        // Panel untuk button
+        JPanel panelButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         btnTambah = new JButton("Tambah Buku");
-        btnCari = new JButton("Cari Buku (by Judul)"); // Bisa juga cari by ISBN atau lainnya
-        panelInput.add(btnTambah);
-        panelInput.add(btnCari);
+        btnDelete = new JButton("Delete Buku");
+        panelButton.add(btnTambah);
+        panelButton.add(btnDelete);
+
+        // Tambahkan form dan button ke panel input
+        panelInput.add(formPanel, BorderLayout.CENTER);
+        panelInput.add(panelButton, BorderLayout.SOUTH);
 
         add(panelInput, BorderLayout.NORTH);
 
@@ -56,16 +64,9 @@ public class PanelBuku extends JPanel {
         scrollPaneTabel.setBorder(BorderFactory.createTitledBorder("Daftar Buku"));
         add(scrollPaneTabel, BorderLayout.CENTER);
 
-        // Panel Tombol Bawah
-        JPanel panelTombolBawah = new JPanel();
-        btnRefresh = new JButton("Refresh Daftar Buku");
-        panelTombolBawah.add(btnRefresh);
-        add(panelTombolBawah, BorderLayout.SOUTH);
-
         // Action Listeners
         btnTambah.addActionListener(e -> tambahBukuAction());
-        btnRefresh.addActionListener(e -> refreshTabelBuku());
-        btnCari.addActionListener(e -> cariBukuAction());
+        btnDelete.addActionListener(e -> deleteBukuAction());
 
         // Muat data awal
         refreshTabelBuku();
@@ -96,30 +97,6 @@ public class PanelBuku extends JPanel {
         txtIsbn.setText("");
     }
 
-    private void cariBukuAction() {
-        String queryJudul = txtJudul.getText(); // Menggunakan field judul untuk pencarian
-        if (queryJudul.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Masukkan judul buku yang ingin dicari.", "Info", JOptionPane.INFORMATION_MESSAGE);
-            refreshTabelBuku(); // Tampilkan semua jika query kosong
-            return;
-        }
-
-        List<Buku> hasilCari = perpustakaan.cariBukuByJudul(queryJudul);
-        tableModel.setRowCount(0); // Kosongkan tabel
-        if (hasilCari.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Tidak ada buku yang cocok dengan judul '" + queryJudul + "'.", "Info", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            for (Buku buku : hasilCari) {
-                Vector<Object> row = new Vector<>();
-                row.add(buku.getIsbn());
-                row.add(buku.getJudul());
-                row.add(buku.getPengarang());
-                row.add(buku.isTersedia() ? "Tersedia" : "Dipinjam");
-                tableModel.addRow(row);
-            }
-        }
-    }
-
     public void refreshTabelBuku() {
         tableModel.setRowCount(0); // Kosongkan tabel sebelum memuat data baru
         List<Buku> daftarBuku = perpustakaan.getSemuaBuku();
@@ -130,6 +107,38 @@ public class PanelBuku extends JPanel {
             row.add(buku.getPengarang());
             row.add(buku.isTersedia() ? "Tersedia" : (buku.getPeminjam() != null ? "Dipinjam oleh " + buku.getPeminjam().getNama() : "Dipinjam"));
             tableModel.addRow(row);
+        }
+    }
+
+    private void deleteBukuAction() {
+        int selectedRow = tabelBuku.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Pilih buku yang ingin dihapus!", "Info", JOptionPane.INFORMATION_MESSAGE);
+            return;
+        }
+
+        String isbn = (String) tableModel.getValueAt(selectedRow, 0);
+        Buku buku = perpustakaan.cariBukuByIsbn(isbn);
+
+        if (buku != null) {
+            int confirm = JOptionPane.showConfirmDialog(this, 
+                "Apakah Anda yakin ingin menghapus buku '" + buku.getJudul() + "'?", 
+                "Konfirmasi Hapus", 
+                JOptionPane.YES_NO_OPTION);
+            
+            if (confirm == JOptionPane.YES_OPTION) {
+                if (!buku.isTersedia()) {
+                    JOptionPane.showMessageDialog(this, 
+                        "Tidak dapat menghapus buku yang sedang dipinjam!", 
+                        "Error", 
+                        JOptionPane.ERROR_MESSAGE);
+                    return;
+                }
+                
+                perpustakaan.hapusBuku(isbn);
+                JOptionPane.showMessageDialog(this, "Buku berhasil dihapus!");
+                refreshTabelBuku();
+            }
         }
     }
 }

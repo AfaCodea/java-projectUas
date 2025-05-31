@@ -32,10 +32,12 @@ public class Perpustakaan {
     }
 
     private void inisialisasiDataContoh() {
+        // Inisialisasi data buku
         tambahBuku(new Buku("Pemrograman Java", "John Doe", "978-123"));
         tambahBuku(new Buku("Algoritma dan Struktur Data", "Jane Smith", "978-456"));
-        tambahBuku(new Buku("Basis Data", "Peter Jones", "978-789"));
+        tambahBuku(new Buku("Basis Data", "Mike Johnson", "978-789"));
 
+        // Inisialisasi data anggota
         registrasiAnggota(new Mahasiswa("Alice", "A001"));
         registrasiAnggota(new Mahasiswa("Bob", "A002"));
     }
@@ -141,6 +143,7 @@ public class Perpustakaan {
             for (Peminjaman p : daftarPeminjaman) {
                 if (p.getBuku().getIsbn().equals(buku.getIsbn()) && p.getTanggalKembaliAktual() == null) {
                     p.setTanggalKembaliAktual(LocalDate.now());
+                    Logger.log("Buku '" + buku.getJudul() + "' berhasil dikembalikan oleh " + p.getAnggota().getNama() + ".");
                     break;
                 }
             }
@@ -208,7 +211,24 @@ public class Perpustakaan {
     }
 
     public void registrasiMahasiswa(Mahasiswa mahasiswaBaru) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'registrasiMahasiswa'");
+        this.daftarAnggota.add(mahasiswaBaru);
+        Logger.log("Anggota \"" + mahasiswaBaru.getNama() + "\" berhasil diregistrasi.");
+    }
+
+    public boolean hapusBuku(String isbn) {
+        Buku buku = cariBukuByIsbn(isbn);
+        if (buku == null) {
+            Logger.log("Error: Buku dengan ISBN " + isbn + " tidak ditemukan.");
+            return false;
+        }
+
+        if (!buku.isTersedia()) {
+            Logger.log("Error: Buku '" + buku.getJudul() + "' sedang dipinjam dan tidak dapat dihapus.");
+            return false;
+        }
+
+        koleksiItem.remove(buku);
+        Logger.log("Buku '" + buku.getJudul() + "' berhasil dihapus.");
+        return true;
     }
 }

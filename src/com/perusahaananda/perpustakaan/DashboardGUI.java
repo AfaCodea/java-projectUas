@@ -67,7 +67,7 @@ public class DashboardGUI extends JFrame {
             JOptionPane.showMessageDialog(this,
                 "Sistem Perpustakaan v1.0\n\n" +
                 "Aplikasi ini dibuat untuk mengelola perpustakaan,\n" +
-                "termasuk manajemen buku, anggota, peminjaman,\n" +
+                "termasuk manajemen buku, mahasiswa, peminjaman,\n" +
                 "dan pengembalian buku.",
                 "Tentang Aplikasi",
                 JOptionPane.INFORMATION_MESSAGE);
@@ -75,7 +75,7 @@ public class DashboardGUI extends JFrame {
         aboutMenu.add(aboutMenuItem);
         menuBar.add(aboutMenu);
         
-        setJMenuBar(menuBar); // Set the menu bar
+        setJMenuBar(menuBar);
         
         // Create sidebar
         createSidebar();
@@ -88,7 +88,7 @@ public class DashboardGUI extends JFrame {
         // Add panels to content panel
         contentPanel.add(dashboardPanel, "dashboard");
         contentPanel.add(panelBuku, "buku");
-        contentPanel.add(panelMahasiswa, "anggota");
+        contentPanel.add(panelMahasiswa, "mahasiswa");
         contentPanel.add(panelPeminjaman, "peminjaman");
         contentPanel.add(panelPengembalian, "pengembalian");
         contentPanel.add(panelRiwayatTransaksi, "laporan");
@@ -184,7 +184,7 @@ public class DashboardGUI extends JFrame {
 
         // Add logo/title
         JLabel titleLabel = new JLabel("Menu");
-        titleLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        titleLabel.setFont(new Font("Arial", Font.BOLD, 15));
         titleLabel.setForeground(Color.WHITE);
         titleLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
         sidebarPanel.add(titleLabel);
@@ -194,16 +194,22 @@ public class DashboardGUI extends JFrame {
         String[] menuItems = {
             "Dashboard",
             "Buku",
-            "Anggota",
+            "User Manajemen",
             "Peminjaman",
             "Pengembalian",
             "Laporan"
         };
 
         for (String menuItem : menuItems) {
-            JButton menuButton = createMenuButton(menuItem);
-            menuButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-            sidebarPanel.add(menuButton);
+            JButton button = createMenuButton(menuItem);
+            button.addActionListener(e -> {
+                String command = menuItem.toLowerCase().replace(" ", "");
+                if (command.equals("usermanajemen")) {
+                    command = "mahasiswa";
+                }
+                cardLayout.show(contentPanel, command);
+            });
+            sidebarPanel.add(button);
             sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
         }
 
@@ -224,8 +230,8 @@ public class DashboardGUI extends JFrame {
         button.setFocusPainted(false);
         button.setHorizontalAlignment(SwingConstants.LEFT);
         button.setAlignmentX(Component.LEFT_ALIGNMENT);
-        button.setMaximumSize(new Dimension(180, 40));
-        button.setPreferredSize(new Dimension(180, 40));
+        button.setMaximumSize(new Dimension(180, 25));
+        button.setPreferredSize(new Dimension(180, 25));
 
         // Add hover effect
         button.addMouseListener(new MouseAdapter() {
@@ -257,7 +263,7 @@ public class DashboardGUI extends JFrame {
                 case "buku":
                     panelBuku.refreshTabelBuku();
                     break;
-                case "anggota":
+                case "mahasiswa":
                     panelMahasiswa.refreshTabelMahasiswa();
                     break;
                 case "peminjaman":
