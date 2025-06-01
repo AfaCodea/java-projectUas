@@ -10,6 +10,7 @@ import com.perusahaananda.perpustakaan.service.Perpustakaan;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URL;
 import java.util.stream.Collectors;
 
 public class DashboardGUI extends JFrame {
@@ -68,7 +69,11 @@ public class DashboardGUI extends JFrame {
                 "Sistem Perpustakaan v1.0\n\n" +
                 "Aplikasi ini dibuat untuk mengelola perpustakaan,\n" +
                 "termasuk manajemen buku, mahasiswa, peminjaman,\n" +
-                "dan pengembalian buku.",
+                "dan pengembalian buku.\n\n" +
+                "Pengembang:\n" +
+                "Agil Prasunza\n" +
+                "Muhammad Raihan Firdaus\n" +
+                "Jordy Marchelino Lumban Gaol",
                 "Tentang Aplikasi",
                 JOptionPane.INFORMATION_MESSAGE);
         });
@@ -119,7 +124,7 @@ public class DashboardGUI extends JFrame {
 
         // Add statistics cards
         statsPanel.add(createStatCard("Total Buku", String.valueOf(perpustakaan.getSemuaBuku().size())));
-        statsPanel.add(createStatCard("Total Anggota", String.valueOf(perpustakaan.getSemuaAnggota().size())));
+        statsPanel.add(createStatCard("Total Mahasiswa", String.valueOf(perpustakaan.getSemuaAnggota().size())));
         statsPanel.add(createStatCard("Buku Dipinjam", String.valueOf(perpustakaan.getDaftarPeminjamanAktif().size())));
         statsPanel.add(createStatCard("Buku Tersedia", String.valueOf(
             perpustakaan.getSemuaBuku().stream().filter(buku -> buku.isTersedia()).count()
@@ -232,6 +237,30 @@ public class DashboardGUI extends JFrame {
         button.setAlignmentX(Component.LEFT_ALIGNMENT);
         button.setMaximumSize(new Dimension(180, 25));
         button.setPreferredSize(new Dimension(180, 25));
+        button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // Add icon based on menu text
+        String iconPath = switch (text.toLowerCase()) {
+            case "dashboard" -> "/com/perusahaananda/perpustakaan/resources/icons/home.png";
+            case "buku" -> "/com/perusahaananda/perpustakaan/resources/icons/book.png";
+            case "user manajemen" -> "/com/perusahaananda/perpustakaan/resources/icons/users.png";
+            case "peminjaman" -> "/com/perusahaananda/perpustakaan/resources/icons/borrow.png";
+            case "pengembalian" -> "/com/perusahaananda/perpustakaan/resources/icons/return.png";
+            case "laporan" -> "/com/perusahaananda/perpustakaan/resources/icons/report.png";
+            case "logout" -> "/com/perusahaananda/perpustakaan/resources/icons/logout.png";
+            default -> null;
+        };
+
+        if (iconPath != null) {
+            try {
+                ImageIcon icon = new ImageIcon(getClass().getResource(iconPath));
+                Image img = icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+                button.setIcon(new ImageIcon(img));
+                button.setIconTextGap(10); // Spacing between icon and text
+            } catch (Exception e) {
+                System.out.println("Icon not found: " + iconPath);
+            }
+        }
 
         // Add hover effect
         button.addMouseListener(new MouseAdapter() {
