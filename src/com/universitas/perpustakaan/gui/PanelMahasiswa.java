@@ -1,10 +1,11 @@
-package com.perusahaananda.perpustakaan.gui;
-
-import com.perusahaananda.perpustakaan.model.Mahasiswa;
-import com.perusahaananda.perpustakaan.service.Perpustakaan;
+package com.universitas.perpustakaan.gui;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
+
+import com.universitas.perpustakaan.model.Mahasiswa;
+import com.universitas.perpustakaan.service.Perpustakaan;
+
 import java.awt.*;
 import java.util.List;
 import java.util.Vector;

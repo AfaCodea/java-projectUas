@@ -1,16 +1,16 @@
-package com.perusahaananda.perpustakaan.service;
-
-import com.perusahaananda.perpustakaan.model.Mahasiswa;
-import com.perusahaananda.perpustakaan.model.Buku;
-import com.perusahaananda.perpustakaan.model.DapatDipinjam;
-import com.perusahaananda.perpustakaan.model.ItemPerpustakaan;
-import com.perusahaananda.perpustakaan.model.Peminjaman;
-import com.perusahaananda.perpustakaan.util.Logger;
+package com.universitas.perpustakaan.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.universitas.perpustakaan.model.Buku;
+import com.universitas.perpustakaan.model.DapatDipinjam;
+import com.universitas.perpustakaan.model.ItemPerpustakaan;
+import com.universitas.perpustakaan.model.Mahasiswa;
+import com.universitas.perpustakaan.model.Peminjaman;
+import com.universitas.perpustakaan.util.Logger;
 
 /**
  * Kelas service yang mengelola logika bisnis perpustakaan.

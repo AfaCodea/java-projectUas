@@ -1,10 +1,9 @@
-package com.perusahaananda.perpustakaan;
-
-import com.perusahaananda.perpustakaan.gui.MainFrame;
-import com.perusahaananda.perpustakaan.service.Perpustakaan;
-import com.perusahaananda.perpustakaan.util.Logger;
+package com.universitas.perpustakaan;
 
 import javax.swing.*;
+
+import com.universitas.perpustakaan.service.Perpustakaan;
+import com.universitas.perpustakaan.util.Logger;
 
 public class MainApp {
     public static void main(String[] args) {
@@ -14,9 +13,15 @@ public class MainApp {
 
         // Jalankan GUI di Event Dispatch Thread (EDT) Swing
         SwingUtilities.invokeLater(() -> {
-            // 1. Object: mainFrame adalah objek dari kelas MainFrame
-            MainFrame mainFrame = new MainFrame(perpustakaanService);
-            mainFrame.setVisible(true);
+            try {
+                UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            
+            // Start with LoginGUI
+            LoginGUI loginGUI = new LoginGUI();
+            loginGUI.setVisible(true);
             
             // Add shutdown hook to close logger
             Runtime.getRuntime().addShutdownHook(new Thread(() -> {

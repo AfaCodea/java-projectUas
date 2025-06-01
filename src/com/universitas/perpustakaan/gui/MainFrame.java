@@ -1,11 +1,12 @@
-package com.perusahaananda.perpustakaan.gui;
-
-import com.perusahaananda.perpustakaan.gui.PanelBuku;
-import com.perusahaananda.perpustakaan.gui.PanelMahasiswa;
-import com.perusahaananda.perpustakaan.gui.PanelRiwayatTransaksi;
-import com.perusahaananda.perpustakaan.service.Perpustakaan;
+package com.universitas.perpustakaan.gui;
 
 import javax.swing.*;
+
+import com.universitas.perpustakaan.gui.PanelBuku;
+import com.universitas.perpustakaan.gui.PanelMahasiswa;
+import com.universitas.perpustakaan.gui.PanelRiwayatTransaksi;
+import com.universitas.perpustakaan.service.Perpustakaan;
+
 import java.awt.*;
 
 /**

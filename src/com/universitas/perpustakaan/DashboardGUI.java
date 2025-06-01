@@ -1,13 +1,14 @@
-package com.perusahaananda.perpustakaan;
-
-import com.perusahaananda.perpustakaan.gui.PanelBuku;
-import com.perusahaananda.perpustakaan.gui.PanelMahasiswa;
-import com.perusahaananda.perpustakaan.gui.PanelPeminjaman;
-import com.perusahaananda.perpustakaan.gui.PanelPengembalian;
-import com.perusahaananda.perpustakaan.gui.PanelRiwayatTransaksi;
-import com.perusahaananda.perpustakaan.service.Perpustakaan;
+package com.universitas.perpustakaan;
 
 import javax.swing.*;
+
+import com.universitas.perpustakaan.gui.PanelBuku;
+import com.universitas.perpustakaan.gui.PanelMahasiswa;
+import com.universitas.perpustakaan.gui.PanelPeminjaman;
+import com.universitas.perpustakaan.gui.PanelPengembalian;
+import com.universitas.perpustakaan.gui.PanelRiwayatTransaksi;
+import com.universitas.perpustakaan.service.Perpustakaan;
+
 import java.awt.*;
 import java.awt.event.*;
 import java.net.URL;
@@ -26,6 +27,10 @@ public class DashboardGUI extends JFrame {
     private PanelRiwayatTransaksi panelRiwayatTransaksi;
     private JPanel dashboardPanel;
     private JPanel laporanPanel;
+    private boolean isSidebarExpanded = true;
+    private Timer sidebarTimer;
+    private static final int SIDEBAR_WIDTH = 200;
+    private static final int COLLAPSED_WIDTH = 50;
 
     public DashboardGUI() {
         // Initialize Perpustakaan service
@@ -183,9 +188,84 @@ public class DashboardGUI extends JFrame {
     private void createSidebar() {
         sidebarPanel = new JPanel();
         sidebarPanel.setLayout(new BoxLayout(sidebarPanel, BoxLayout.Y_AXIS));
-        sidebarPanel.setBackground(new Color(51, 51, 51));
-        sidebarPanel.setPreferredSize(new Dimension(200, 0));
+        sidebarPanel.setBackground(new Color(80, 80, 80));
+        sidebarPanel.setPreferredSize(new Dimension(SIDEBAR_WIDTH, 0));
         sidebarPanel.setBorder(BorderFactory.createEmptyBorder(20, 10, 20, 10));
+
+        // Add toggle button
+        JButton toggleButton = new JButton();
+        try {
+            URL menuUrl = getClass().getClassLoader().getResource("icons/menu.png");
+            URL closeUrl = getClass().getClassLoader().getResource("icons/close.png");
+            
+            if (menuUrl != null && closeUrl != null) {
+                ImageIcon menuIcon = new ImageIcon(menuUrl);
+                ImageIcon closeIcon = new ImageIcon(closeUrl);
+                Image menuImg = menuIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+                Image closeImg = closeIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+                toggleButton.setIcon(new ImageIcon(menuImg));
+                toggleButton.setPressedIcon(new ImageIcon(closeImg));
+            } else {
+                System.out.println("Menu icons not found");
+                toggleButton.setText("☰"); // Fallback ke text jika icon tidak ditemukan
+            }
+        } catch (Exception e) {
+            System.out.println("Error loading menu icons: " + e.getMessage());
+            toggleButton.setText("☰"); // Fallback ke text jika icon tidak ditemukan
+        }
+        toggleButton.setFont(new Font("Arial", Font.BOLD, 15));
+        toggleButton.setForeground(Color.WHITE);
+        toggleButton.setBackground(new Color(51, 51, 51));
+        toggleButton.setBorderPainted(false);
+        toggleButton.setFocusPainted(false);
+        toggleButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+        toggleButton.setMaximumSize(new Dimension(40, 40));
+        toggleButton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        // Add hover effect for toggle button
+        toggleButton.addMouseListener(new MouseAdapter() {
+            public void mouseEntered(MouseEvent e) {
+                toggleButton.setBackground(new Color(70, 70, 70));
+            }
+            public void mouseExited(MouseEvent e) {
+                toggleButton.setBackground(new Color(51, 51, 51));
+            }
+            public void mousePressed(MouseEvent e) {
+                toggleButton.setBackground(new Color(90, 90, 90));
+            }
+            public void mouseReleased(MouseEvent e) {
+                if (toggleButton.getModel().isRollover()) {
+                    toggleButton.setBackground(new Color(70, 70, 70));
+                } else {
+                    toggleButton.setBackground(new Color(51, 51, 51));
+                }
+            }
+        });
+
+        toggleButton.addActionListener(e -> {
+            toggleSidebar();
+            // Mengubah icon saat sidebar dibuka/ditutup
+            try {
+                URL menuUrl = getClass().getClassLoader().getResource("icons/menu.png");
+                URL closeUrl = getClass().getClassLoader().getResource("icons/close.png");
+                
+                if (menuUrl != null && closeUrl != null) {
+                    ImageIcon menuIcon = new ImageIcon(menuUrl);
+                    ImageIcon closeIcon = new ImageIcon(closeUrl);
+                    Image menuImg = menuIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+                    Image closeImg = closeIcon.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+                    toggleButton.setIcon(isSidebarExpanded ? new ImageIcon(menuImg) : new ImageIcon(closeImg));
+                } else {
+                    System.out.println("Menu icons not found");
+                    toggleButton.setText(isSidebarExpanded ? "☰" : "×"); // Fallback ke text jika icon tidak ditemukan
+                }
+            } catch (Exception ex) {
+                System.out.println("Error loading menu icons: " + ex.getMessage());
+                toggleButton.setText(isSidebarExpanded ? "☰" : "×"); // Fallback ke text jika icon tidak ditemukan
+            }
+        });
+        sidebarPanel.add(toggleButton);
+        sidebarPanel.add(Box.createRigidArea(new Dimension(0, 20)));
 
         // Add logo/title
         JLabel titleLabel = new JLabel("Menu");
@@ -213,6 +293,31 @@ public class DashboardGUI extends JFrame {
                     command = "mahasiswa";
                 }
                 cardLayout.show(contentPanel, command);
+                
+                // Refresh data sesuai panel
+                switch (command) {
+                    case "buku":
+                        panelBuku.refreshTabelBuku();
+                        break;
+                    case "mahasiswa":
+                        panelMahasiswa.refreshTabelMahasiswa();
+                        break;
+                    case "peminjaman":
+                        panelPeminjaman.refreshData();
+                        break;
+                    case "pengembalian":
+                        panelPengembalian.refreshData();
+                        break;
+                    case "laporan":
+                        panelRiwayatTransaksi.refreshTabelTransaksi();
+                        break;
+                    case "dashboard":
+                        contentPanel.remove(dashboardPanel);
+                        dashboardPanel = createDashboardPanel();
+                        contentPanel.add(dashboardPanel, "dashboard");
+                        cardLayout.show(contentPanel, "dashboard");
+                        break;
+                }
             });
             sidebarPanel.add(button);
             sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
@@ -224,6 +329,79 @@ public class DashboardGUI extends JFrame {
         logoutButton.setAlignmentX(Component.LEFT_ALIGNMENT);
         logoutButton.addActionListener(e -> handleLogout());
         sidebarPanel.add(logoutButton);
+
+        // Initialize sidebar timer
+        sidebarTimer = new Timer(10, null);
+        sidebarTimer.setRepeats(true);
+    }
+
+    private void toggleSidebar() {
+        if (sidebarTimer.isRunning()) {
+            return;
+        }
+
+        // Target width for the animation
+        int targetWidth = isSidebarExpanded ? COLLAPSED_WIDTH : SIDEBAR_WIDTH;
+        // Step size and direction for the animation
+        int step = isSidebarExpanded ? -5 : 5;
+
+        // Remove any existing action listeners to ensure a clean state for the timer
+        for (ActionListener listener : sidebarTimer.getActionListeners()) {
+            sidebarTimer.removeActionListener(listener);
+        }
+
+        sidebarTimer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // Get the actual current width of the sidebar panel in each animation step
+                int actualCurrentWidth = sidebarPanel.getWidth();
+                int newWidth = actualCurrentWidth + step;
+
+                // Check if the animation should stop
+                // If expanding (!isSidebarExpanded), stop when newWidth >= targetWidth
+                // If collapsing (isSidebarExpanded), stop when newWidth <= targetWidth
+                if ((!isSidebarExpanded && newWidth >= targetWidth) || (isSidebarExpanded && newWidth <= targetWidth)) {
+                    newWidth = targetWidth; // Snap to the exact target width
+                    sidebarTimer.stop();
+                    isSidebarExpanded = !isSidebarExpanded; // Toggle the expanded state
+                    updateSidebarComponents(); // Update components based on the new state
+                }
+
+                // Set the new preferred size for the sidebar
+                sidebarPanel.setPreferredSize(new Dimension(newWidth, sidebarPanel.getHeight()));
+                
+                // Revalidate and repaint the main panel to reflect size changes
+                // Assuming mainPanel is the container of sidebarPanel and needs to adjust its layout
+                mainPanel.revalidate();
+                mainPanel.repaint();
+            }
+        });
+
+        sidebarTimer.start(); // Start the animation
+    }
+    
+    private void updateSidebarComponents() {
+        Component[] components = sidebarPanel.getComponents();
+        for (Component comp : components) {
+            if (comp instanceof JButton) {
+                JButton button = (JButton) comp;
+                if (button.getText().equals("☰") || button.getText().equals("×")) {
+                    continue; // Skip toggle button
+                }
+                if (isSidebarExpanded) {
+                    button.setText(button.getActionCommand());
+                    button.setMaximumSize(new Dimension(180, 25));
+                    button.setPreferredSize(new Dimension(180, 25));
+                } else {
+                    button.setText("");
+                    button.setMaximumSize(new Dimension(30, 25));
+                    button.setPreferredSize(new Dimension(30, 25));
+                }
+            } else if (comp instanceof JLabel) {
+                JLabel label = (JLabel) comp;
+                label.setVisible(isSidebarExpanded);
+            }
+        }
     }
 
     private JButton createMenuButton(String text) {
@@ -238,27 +416,33 @@ public class DashboardGUI extends JFrame {
         button.setMaximumSize(new Dimension(180, 25));
         button.setPreferredSize(new Dimension(180, 25));
         button.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        button.setActionCommand(text); // Store the original text
 
         // Add icon based on menu text
         String iconPath = switch (text.toLowerCase()) {
-            case "dashboard" -> "/com/perusahaananda/perpustakaan/resources/icons/home.png";
-            case "buku" -> "/com/perusahaananda/perpustakaan/resources/icons/book.png";
-            case "user manajemen" -> "/com/perusahaananda/perpustakaan/resources/icons/users.png";
-            case "peminjaman" -> "/com/perusahaananda/perpustakaan/resources/icons/borrow.png";
-            case "pengembalian" -> "/com/perusahaananda/perpustakaan/resources/icons/return.png";
-            case "laporan" -> "/com/perusahaananda/perpustakaan/resources/icons/report.png";
-            case "logout" -> "/com/perusahaananda/perpustakaan/resources/icons/logout.png";
+            case "dashboard" -> "icons/dashboard.png";
+            case "buku" -> "icons/book.png";
+            case "user manajemen" -> "icons/users.png";
+            case "peminjaman" -> "icons/borrow.png";
+            case "pengembalian" -> "icons/return.png";
+            case "laporan" -> "icons/report.png";
+            case "logout" -> "icons/logout.png";
             default -> null;
         };
 
         if (iconPath != null) {
             try {
-                ImageIcon icon = new ImageIcon(getClass().getResource(iconPath));
-                Image img = icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
-                button.setIcon(new ImageIcon(img));
-                button.setIconTextGap(10); // Spacing between icon and text
+                URL imageUrl = getClass().getClassLoader().getResource(iconPath);
+                if (imageUrl != null) {
+                    ImageIcon icon = new ImageIcon(imageUrl);
+                    Image img = icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+                    button.setIcon(new ImageIcon(img));
+                    button.setIconTextGap(10); // Spacing between icon and text
+                } else {
+                    System.out.println("Icon not found: " + iconPath);
+                }
             } catch (Exception e) {
-                System.out.println("Icon not found: " + iconPath);
+                System.out.println("Error loading icon: " + e.getMessage());
             }
         }
 
@@ -270,47 +454,16 @@ public class DashboardGUI extends JFrame {
             public void mouseExited(MouseEvent e) {
                 button.setBackground(new Color(51, 51, 51));
             }
-            // Add pressed state effect
             public void mousePressed(MouseEvent e) {
-                button.setBackground(new Color(90, 90, 90)); // Darker color when pressed
+                button.setBackground(new Color(90, 90, 90));
             }
             public void mouseReleased(MouseEvent e) {
-                // Revert to hover color if mouse is still inside, otherwise to default
                 if (button.getModel().isRollover()) {
-                     button.setBackground(new Color(70, 70, 70));
+                    button.setBackground(new Color(70, 70, 70));
                 } else {
-                     button.setBackground(new Color(51, 51, 51));
+                    button.setBackground(new Color(51, 51, 51));
                 }
             }
-        });
-
-        // Add click action
-        button.addActionListener(e -> {
-            // Refresh data sesuai panel
-            String panelName = text.toLowerCase();
-            switch (panelName) {
-                case "buku":
-                    panelBuku.refreshTabelBuku();
-                    break;
-                case "mahasiswa":
-                    panelMahasiswa.refreshTabelMahasiswa();
-                    break;
-                case "peminjaman":
-                    panelPeminjaman.refreshData();
-                    break;
-                case "pengembalian":
-                    panelPengembalian.refreshData();
-                    break;
-                case "laporan":
-                    panelRiwayatTransaksi.refreshTabelTransaksi();
-                    break;
-                case "dashboard":
-                    contentPanel.remove(dashboardPanel);
-                    dashboardPanel = createDashboardPanel();
-                    contentPanel.add(dashboardPanel, "dashboard");
-                    break;
-            }
-            cardLayout.show(contentPanel, panelName);
         });
 
         return button;

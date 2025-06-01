@@ -1,10 +1,11 @@
-package com.perusahaananda.perpustakaan.gui;
-
-import com.perusahaananda.perpustakaan.model.Mahasiswa;
-import com.perusahaananda.perpustakaan.model.Buku;
-import com.perusahaananda.perpustakaan.service.Perpustakaan;
+package com.universitas.perpustakaan.gui;
 
 import javax.swing.*;
+
+import com.universitas.perpustakaan.model.Buku;
+import com.universitas.perpustakaan.model.Mahasiswa;
+import com.universitas.perpustakaan.service.Perpustakaan;
+
 import java.awt.*;
 import java.time.LocalDate;
 import java.util.List;
