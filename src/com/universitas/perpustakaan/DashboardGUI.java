@@ -58,17 +58,22 @@ public class DashboardGUI extends JFrame {
         
         // Create menu bar
         JMenuBar menuBar = new JMenuBar();
-        
+        menuBar.setFont(new Font("Arial", Font.PLAIN, 13));
+
         // File Menu
         JMenu fileMenu = new JMenu("File");
+        fileMenu.setFont(new Font("Arial", Font.PLAIN, 13));
         JMenuItem exitMenuItem = new JMenuItem("Keluar");
+        exitMenuItem.setFont(new Font("Arial", Font.PLAIN, 13));
         exitMenuItem.addActionListener(e -> System.exit(0));
         fileMenu.add(exitMenuItem);
         menuBar.add(fileMenu);
         
         // About Menu
         JMenu aboutMenu = new JMenu("About");
+        aboutMenu.setFont(new Font("Arial", Font.PLAIN, 13));
         JMenuItem aboutMenuItem = new JMenuItem("Tentang Aplikasi");
+        aboutMenuItem.setFont(new Font("Arial", Font.PLAIN, 13));
         aboutMenuItem.addActionListener(e -> {
             JOptionPane.showMessageDialog(this,
                 "Sistem Perpustakaan v1.0\n\n" +
@@ -195,8 +200,8 @@ public class DashboardGUI extends JFrame {
         // Add toggle button
         JButton toggleButton = new JButton();
         try {
-            URL menuUrl = getClass().getClassLoader().getResource("icons/menu.png");
-            URL closeUrl = getClass().getClassLoader().getResource("icons/close.png");
+            URL menuUrl = getClass().getClassLoader().getResource("icons_toggle/menu.png");
+            URL closeUrl = getClass().getClassLoader().getResource("icons_toggle/close.png");
             
             if (menuUrl != null && closeUrl != null) {
                 ImageIcon menuIcon = new ImageIcon(menuUrl);
@@ -246,8 +251,8 @@ public class DashboardGUI extends JFrame {
             toggleSidebar();
             // Mengubah icon saat sidebar dibuka/ditutup
             try {
-                URL menuUrl = getClass().getClassLoader().getResource("icons/menu.png");
-                URL closeUrl = getClass().getClassLoader().getResource("icons/close.png");
+                URL menuUrl = getClass().getClassLoader().getResource("icons_toggle/menu.png");
+                URL closeUrl = getClass().getClassLoader().getResource("icons_toggle/close.png");
                 
                 if (menuUrl != null && closeUrl != null) {
                     ImageIcon menuIcon = new ImageIcon(menuUrl);
