@@ -28,6 +28,7 @@ public class PanelPengembalian extends JPanel {
 
         panelInputPengembalian.add(new JLabel("ISBN Buku yang Dikembalikan:"));
         txtIsbnUntukKembali = new JTextField();
+        txtIsbnUntukKembali.setPreferredSize(new Dimension(txtIsbnUntukKembali.getPreferredSize().width, 30));
         panelInputPengembalian.add(txtIsbnUntukKembali);
 
         btnKembali = new JButton("Kembalikan Buku");

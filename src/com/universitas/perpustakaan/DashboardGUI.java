@@ -30,7 +30,12 @@ public class DashboardGUI extends JFrame {
     private boolean isSidebarExpanded = true;
     private Timer sidebarTimer;
     private static final int SIDEBAR_WIDTH = 200;
-    private static final int COLLAPSED_WIDTH = 50;
+    private static final int COLLAPSED_WIDTH = 60;
+    private static final Color SIDEBAR_COLOR = new Color(80, 80, 80);
+    private static final Color SIDEBAR_HOVER_COLOR = new Color(100, 100, 100);
+    private static final Color SIDEBAR_PRESSED_COLOR = new Color(60, 60, 60);
+    private static final Color SIDEBAR_ACTIVE_COLOR = new Color(0, 120, 215);
+    private static final Font SIDEBAR_FONT = new Font("Arial", Font.BOLD, 15);
 
     public DashboardGUI() {
         // Initialize Perpustakaan service
@@ -53,27 +58,31 @@ public class DashboardGUI extends JFrame {
         setLocationRelativeTo(null);
         setMinimumSize(new Dimension(1000, 600));
 
-        // Create main panel with BorderLayout
+        // Create main panel with BorderLayout and smooth border
         mainPanel = new JPanel(new BorderLayout());
         
         // Create menu bar
         JMenuBar menuBar = new JMenuBar();
-        menuBar.setFont(new Font("Arial", Font.PLAIN, 13));
+        menuBar.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        menuBar.setBorder(BorderFactory.createCompoundBorder(
+            BorderFactory.createMatteBorder(0, 0, 1, 0, new Color(200, 200, 200)),
+            BorderFactory.createEmptyBorder(2, 2, 2, 2)
+        ));
 
         // File Menu
         JMenu fileMenu = new JMenu("File");
-        fileMenu.setFont(new Font("Arial", Font.PLAIN, 13));
+        fileMenu.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         JMenuItem exitMenuItem = new JMenuItem("Keluar");
-        exitMenuItem.setFont(new Font("Arial", Font.PLAIN, 13));
+        exitMenuItem.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         exitMenuItem.addActionListener(e -> System.exit(0));
         fileMenu.add(exitMenuItem);
         menuBar.add(fileMenu);
         
         // About Menu
         JMenu aboutMenu = new JMenu("About");
-        aboutMenu.setFont(new Font("Arial", Font.PLAIN, 13));
+        aboutMenu.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         JMenuItem aboutMenuItem = new JMenuItem("Tentang Aplikasi");
-        aboutMenuItem.setFont(new Font("Arial", Font.PLAIN, 13));
+        aboutMenuItem.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         aboutMenuItem.addActionListener(e -> {
             JOptionPane.showMessageDialog(this,
                 "Sistem Perpustakaan v1.0\n\n" +
@@ -280,60 +289,74 @@ public class DashboardGUI extends JFrame {
         sidebarPanel.add(titleLabel);
         sidebarPanel.add(Box.createRigidArea(new Dimension(0, 30)));
 
-        // Create menu buttons
-        String[] menuItems = {
-            "Dashboard",
-            "Buku",
-            "User Manajemen",
-            "Peminjaman",
-            "Pengembalian",
-            "Laporan"
+        // Create menu items with their respective icons
+        String[][] menuItems = {
+            {"Dashboard", "icons/dashboard.png"},
+            {"Buku", "icons/book.png"},
+            {"User Manajemen", "icons/users.png"},
+            {"Peminjaman", "icons/borrow.png"},
+            {"Pengembalian", "icons/return.png"},
+            {"Laporan", "icons/report.png"}
         };
 
-        for (String menuItem : menuItems) {
-            JButton button = createMenuButton(menuItem);
-            button.addActionListener(e -> {
-                String command = menuItem.toLowerCase().replace(" ", "");
-                if (command.equals("usermanajemen")) {
-                    command = "mahasiswa";
-                }
-                cardLayout.show(contentPanel, command);
-                
-                // Refresh data sesuai panel
-                switch (command) {
-                    case "buku":
-                        panelBuku.refreshTabelBuku();
-                        break;
-                    case "mahasiswa":
-                        panelMahasiswa.refreshTabelMahasiswa();
-                        break;
-                    case "peminjaman":
-                        panelPeminjaman.refreshData();
-                        break;
-                    case "pengembalian":
-                        panelPengembalian.refreshData();
-                        break;
-                    case "laporan":
-                        panelRiwayatTransaksi.refreshTabelTransaksi();
-                        break;
-                    case "dashboard":
-                        contentPanel.remove(dashboardPanel);
-                        dashboardPanel = createDashboardPanel();
-                        contentPanel.add(dashboardPanel, "dashboard");
-                        cardLayout.show(contentPanel, "dashboard");
-                        break;
+        for (String[] menuItem : menuItems) {
+            JPanel panel = createSidebarPanel(menuItem[0], menuItem[1]);
+            panel.setAlignmentX(Component.LEFT_ALIGNMENT);
+            panel.setMaximumSize(new Dimension(SIDEBAR_WIDTH - 20, 35));
+            
+            // Add click listener
+            panel.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    String command = menuItem[0].toLowerCase().replace(" ", "");
+                    if (command.equals("usermanajemen")) {
+                        command = "mahasiswa";
+                    }
+                    cardLayout.show(contentPanel, command);
+                    
+                    // Refresh data sesuai panel
+                    switch (command) {
+                        case "buku":
+                            panelBuku.refreshTabelBuku();
+                            break;
+                        case "mahasiswa":
+                            panelMahasiswa.refreshTabelMahasiswa();
+                            break;
+                        case "peminjaman":
+                            panelPeminjaman.refreshData();
+                            break;
+                        case "pengembalian":
+                            panelPengembalian.refreshData();
+                            break;
+                        case "laporan":
+                            panelRiwayatTransaksi.refreshTabelTransaksi();
+                            break;
+                        case "dashboard":
+                            contentPanel.remove(dashboardPanel);
+                            dashboardPanel = createDashboardPanel();
+                            contentPanel.add(dashboardPanel, "dashboard");
+                            cardLayout.show(contentPanel, "dashboard");
+                            break;
+                    }
                 }
             });
-            sidebarPanel.add(button);
-            sidebarPanel.add(Box.createRigidArea(new Dimension(0, 10)));
+            
+            sidebarPanel.add(panel);
+            sidebarPanel.add(Box.createRigidArea(new Dimension(0, 8)));
         }
 
         // Add logout button at the bottom
         sidebarPanel.add(Box.createVerticalGlue());
-        JButton logoutButton = createMenuButton("Logout");
-        logoutButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-        logoutButton.addActionListener(e -> handleLogout());
-        sidebarPanel.add(logoutButton);
+        JPanel logoutPanel = createSidebarPanel("Logout", "icons/logout.png");
+        logoutPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        logoutPanel.setMaximumSize(new Dimension(SIDEBAR_WIDTH - 20, 35));
+        logoutPanel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                handleLogout();
+            }
+        });
+        sidebarPanel.add(logoutPanel);
 
         // Initialize sidebar timer
         sidebarTimer = new Timer(10, null);
@@ -486,6 +509,65 @@ public class DashboardGUI extends JFrame {
             dispose();
             new LoginGUI().setVisible(true);
         }
+    }
+
+    private JPanel createSidebarPanel(String title, String iconPath) {
+        JPanel panel = new JPanel();
+        panel.setLayout(new BoxLayout(panel, BoxLayout.X_AXIS));
+        panel.setBackground(SIDEBAR_COLOR);
+        panel.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
+        panel.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        panel.setOpaque(true);
+
+        // Add hover effect
+        panel.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                panel.setBackground(SIDEBAR_HOVER_COLOR);
+                panel.setBorder(BorderFactory.createCompoundBorder(
+                    BorderFactory.createMatteBorder(0, 3, 0, 0, SIDEBAR_ACTIVE_COLOR),
+                    BorderFactory.createEmptyBorder(6, 12, 6, 12)
+                ));
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                panel.setBackground(SIDEBAR_COLOR);
+                panel.setBorder(BorderFactory.createEmptyBorder(6, 15, 6, 15));
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {
+                panel.setBackground(SIDEBAR_PRESSED_COLOR);
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                if (panel.getBounds().contains(e.getPoint())) {
+                    panel.setBackground(SIDEBAR_HOVER_COLOR);
+                } else {
+                    panel.setBackground(SIDEBAR_COLOR);
+                }
+            }
+        });
+
+        try {
+            ImageIcon icon = new ImageIcon(getClass().getClassLoader().getResource(iconPath));
+            Image img = icon.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+            icon = new ImageIcon(img);
+            JLabel iconLabel = new JLabel(icon);
+            iconLabel.setBorder(BorderFactory.createEmptyBorder(0, 0, 0, 12));
+            panel.add(iconLabel);
+        } catch (Exception e) {
+            System.err.println("Error loading icon: " + e.getMessage());
+        }
+
+        JLabel titleLabel = new JLabel(title);
+        titleLabel.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        titleLabel.setForeground(Color.WHITE);
+        panel.add(titleLabel);
+
+        return panel;
     }
 
     public static void main(String[] args) {

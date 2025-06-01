@@ -196,7 +196,7 @@ public class LoginGUI extends JFrame {
             button.add(arrowLabel);
         }
 
-        Dimension buttonSize = new Dimension(140, 35);
+        Dimension buttonSize = new Dimension(160, 35);
         button.setPreferredSize(buttonSize);
         button.setMaximumSize(buttonSize);
         button.setMinimumSize(buttonSize);

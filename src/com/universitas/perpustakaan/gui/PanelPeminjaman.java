@@ -31,10 +31,12 @@ public class PanelPeminjaman extends JPanel {
 
         panelInputPeminjaman.add(new JLabel("Pilih Buku (Tersedia):"));
         comboBuku = new JComboBox<>();
+        comboBuku.setPreferredSize(new Dimension(comboBuku.getPreferredSize().width, 40));
         panelInputPeminjaman.add(comboBuku);
 
-        panelInputPeminjaman.add(new JLabel("Pilih Anggota:"));
+        panelInputPeminjaman.add(new JLabel("Pilih Mahasiswa:"));
         comboAnggota = new JComboBox<>();
+        comboAnggota.setPreferredSize(new Dimension(comboAnggota.getPreferredSize().width, 40));
         panelInputPeminjaman.add(comboAnggota);
 
         btnPinjam = new JButton("Pinjam Buku");
