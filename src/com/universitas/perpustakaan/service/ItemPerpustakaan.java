@@ -1,4 +1,4 @@
-package com.perusahaananda.perpustakaan.service;
+package com.universitas.perpustakaan.service;
 
 /**
  * 8. Abstraction: Kelas abstrak sebagai dasar untuk item di perpustakaan.

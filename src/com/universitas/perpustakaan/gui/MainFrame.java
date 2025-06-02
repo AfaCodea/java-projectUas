@@ -1,8 +1,12 @@
-package com.perusahaananda.perpustakaan.gui;
-
-import com.perusahaananda.perpustakaan.service.Perpustakaan;
+package com.universitas.perpustakaan.gui;
 
 import javax.swing.*;
+
+import com.universitas.perpustakaan.gui.PanelBuku;
+import com.universitas.perpustakaan.gui.PanelMahasiswa;
+import com.universitas.perpustakaan.gui.PanelRiwayatTransaksi;
+import com.universitas.perpustakaan.service.Perpustakaan;
+
 import java.awt.*;
 
 /**
@@ -14,7 +18,7 @@ public class MainFrame extends JFrame {
     // Panel-panel
     private PanelBuku panelBuku;
     private PanelMahasiswa panelAnggota;
-    private PanelTransaksi panelTransaksi;
+    private PanelRiwayatTransaksi panelRiwayatTransaksi;
     private JTextArea displayArea; // Untuk menampilkan informasi umum atau log sederhana
 
     public MainFrame(Perpustakaan perpustakaan) {
@@ -33,7 +37,7 @@ public class MainFrame extends JFrame {
 
         panelBuku = new PanelBuku(perpustakaan);
         panelAnggota = new PanelMahasiswa(perpustakaan);
-        panelTransaksi = new PanelTransaksi(perpustakaan, panelBuku); // panelBuku untuk refresh data buku
+        panelRiwayatTransaksi = new PanelRiwayatTransaksi(perpustakaan);
 
         // Display area sederhana untuk log atau output umum
         displayArea = new JTextArea(10, 50);
@@ -43,7 +47,7 @@ public class MainFrame extends JFrame {
         // Tambahkan panel ke tab
         tabbedPane.addTab("Manajemen Buku", panelBuku);
         tabbedPane.addTab("Manajemen Mahasiswa", panelAnggota);
-        tabbedPane.addTab("Transaksi Peminjaman/Pengembalian", panelTransaksi);
+        tabbedPane.addTab("Riwayat Transaksi", panelRiwayatTransaksi);
         tabbedPane.addTab("Log Sistem", scrollPaneDisplay); // Tab untuk displayArea
 
         // Tambahkan menu sederhana (opsional, bisa dikembangkan)

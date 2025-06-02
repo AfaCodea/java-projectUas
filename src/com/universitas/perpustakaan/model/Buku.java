@@ -1,8 +1,9 @@
-package com.perusahaananda.perpustakaan.model;
+package com.universitas.perpustakaan.model;
 
-import com.perusahaananda.perpustakaan.util.Logger;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+
+import com.universitas.perpustakaan.util.Logger;
 
 /**
  * 1. Class: Merepresentasikan sebuah buku.

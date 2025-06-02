@@ -1,16 +1,16 @@
-package com.perusahaananda.perpustakaan.service;
-
-import com.perusahaananda.perpustakaan.model.Mahasiswa;
-import com.perusahaananda.perpustakaan.model.Buku;
-import com.perusahaananda.perpustakaan.model.DapatDipinjam;
-import com.perusahaananda.perpustakaan.model.ItemPerpustakaan;
-import com.perusahaananda.perpustakaan.model.Peminjaman;
-import com.perusahaananda.perpustakaan.util.Logger;
+package com.universitas.perpustakaan.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import com.universitas.perpustakaan.model.Buku;
+import com.universitas.perpustakaan.model.DapatDipinjam;
+import com.universitas.perpustakaan.model.ItemPerpustakaan;
+import com.universitas.perpustakaan.model.Mahasiswa;
+import com.universitas.perpustakaan.model.Peminjaman;
+import com.universitas.perpustakaan.util.Logger;
 
 /**
  * Kelas service yang mengelola logika bisnis perpustakaan.
@@ -32,10 +32,12 @@ public class Perpustakaan {
     }
 
     private void inisialisasiDataContoh() {
+        // Inisialisasi data buku
         tambahBuku(new Buku("Pemrograman Java", "John Doe", "978-123"));
         tambahBuku(new Buku("Algoritma dan Struktur Data", "Jane Smith", "978-456"));
-        tambahBuku(new Buku("Basis Data", "Peter Jones", "978-789"));
+        tambahBuku(new Buku("Basis Data", "Mike Johnson", "978-789"));
 
+        // Inisialisasi data anggota
         registrasiAnggota(new Mahasiswa("Alice", "A001"));
         registrasiAnggota(new Mahasiswa("Bob", "A002"));
     }
@@ -139,8 +141,9 @@ public class Perpustakaan {
         if (!buku.isTersedia() && buku instanceof DapatDipinjam) {
             DapatDipinjam itemDikembalikan = (DapatDipinjam) buku;
             for (Peminjaman p : daftarPeminjaman) {
-                if (p.getBuku().equals(buku) && p.getTanggalKembaliAktual() == null) {
+                if (p.getBuku().getIsbn().equals(buku.getIsbn()) && p.getTanggalKembaliAktual() == null) {
                     p.setTanggalKembaliAktual(LocalDate.now());
+                    Logger.log("Buku '" + buku.getJudul() + "' berhasil dikembalikan oleh " + p.getAnggota().getNama() + ".");
                     break;
                 }
             }
@@ -187,22 +190,45 @@ public class Perpustakaan {
     }
 
     public List<Mahasiswa> getSemuaMahasiswa() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getSemuaMahasiswa'");
+        return new ArrayList<>(daftarAnggota);
     }
 
     public boolean hapusMahasiswa(String idMahasiswa) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'hapusMahasiswa'");
+        Mahasiswa mahasiswa = cariMahasiswaById(idMahasiswa);
+        if (mahasiswa == null) {
+            return false;
+        }
+        return daftarAnggota.remove(mahasiswa);
     }
 
-    public Object cariMahasiswaById(String id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'cariMahasiswaById'");
+    public Mahasiswa cariMahasiswaById(String id) {
+        for (Mahasiswa mahasiswa : daftarAnggota) {
+            if (mahasiswa.getIdAnggota().equals(id)) {
+                return mahasiswa;
+            }
+        }
+        return null;
     }
 
     public void registrasiMahasiswa(Mahasiswa mahasiswaBaru) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'registrasiMahasiswa'");
+        this.daftarAnggota.add(mahasiswaBaru);
+        Logger.log("Anggota \"" + mahasiswaBaru.getNama() + "\" berhasil diregistrasi.");
+    }
+
+    public boolean hapusBuku(String isbn) {
+        Buku buku = cariBukuByIsbn(isbn);
+        if (buku == null) {
+            Logger.log("Error: Buku dengan ISBN " + isbn + " tidak ditemukan.");
+            return false;
+        }
+
+        if (!buku.isTersedia()) {
+            Logger.log("Error: Buku '" + buku.getJudul() + "' sedang dipinjam dan tidak dapat dihapus.");
+            return false;
+        }
+
+        koleksiItem.remove(buku);
+        Logger.log("Buku '" + buku.getJudul() + "' berhasil dihapus.");
+        return true;
     }
 }

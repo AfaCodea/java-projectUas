@@ -1,4 +1,4 @@
-package com.perusahaananda.perpustakaan.model;
+package com.universitas.perpustakaan.model;
 
 import java.time.LocalDate;
 
