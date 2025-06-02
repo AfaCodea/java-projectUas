@@ -4,11 +4,17 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
+import javax.swing.InputMap;
+import javax.swing.ActionMap;
+import javax.swing.KeyStroke;
+import javax.swing.AbstractAction;
 
 import com.universitas.perpustakaan.model.Buku;
 import com.universitas.perpustakaan.service.Perpustakaan;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -42,20 +48,22 @@ public class PanelBuku extends JPanel {
 
         // Panel untuk form input
         JPanel formPanel = new JPanel(new GridLayout(3, 2, 5, 5));
-        formPanel.add(new JLabel("Judul:"));
-        txtJudul = new JTextField();
-        txtJudul.setPreferredSize(new Dimension(txtJudul.getPreferredSize().width, 30));
-        formPanel.add(txtJudul);
-
-        formPanel.add(new JLabel("Pengarang:"));
-        txtPengarang = new JTextField();
-        txtPengarang.setPreferredSize(new Dimension(txtPengarang.getPreferredSize().width, 30));
-        formPanel.add(txtPengarang);
-
+        
         formPanel.add(new JLabel("ISBN:"));
         txtIsbn = new JTextField();
         txtIsbn.setPreferredSize(new Dimension(txtIsbn.getPreferredSize().width, 30));
         formPanel.add(txtIsbn);
+        
+        formPanel.add(new JLabel("Judul:"));
+        txtJudul = new JTextField();
+        txtJudul.setPreferredSize(new Dimension(txtJudul.getPreferredSize().width, 30));
+        formPanel.add(txtJudul);
+        
+        formPanel.add(new JLabel("Pengarang:"));
+        txtPengarang = new JTextField();
+        txtPengarang.setPreferredSize(new Dimension(txtPengarang.getPreferredSize().width, 30));
+        formPanel.add(txtPengarang);
+        
 
         // Panel untuk button
         JPanel panelButton = new JPanel(new FlowLayout(FlowLayout.RIGHT));
@@ -70,6 +78,7 @@ public class PanelBuku extends JPanel {
         btnTambah.setBorderPainted(true);
         btnTambah.setOpaque(true);
         btnTambah.setContentAreaFilled(true);
+        btnTambah.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnTambah.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createRaisedBevelBorder(),
             BorderFactory.createEmptyBorder(5, 15, 5, 15)
@@ -112,6 +121,7 @@ public class PanelBuku extends JPanel {
         btnDelete.setBorderPainted(true);
         btnDelete.setOpaque(true);
         btnDelete.setContentAreaFilled(true);
+        btnDelete.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnDelete.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createRaisedBevelBorder(),
             BorderFactory.createEmptyBorder(5, 15, 5, 15)
@@ -222,7 +232,23 @@ public class PanelBuku extends JPanel {
         btnTambah.addActionListener(e -> tambahBukuAction());
         btnDelete.addActionListener(e -> deleteBukuAction());
 
-        // Muat data awal
+        // Add action listeners for Enter key
+        InputMap inputMap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getActionMap();
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
+        actionMap.put("enter", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtJudul.isFocusOwner() || txtPengarang.isFocusOwner() || txtIsbn.isFocusOwner() || btnTambah.isFocusOwner()) {
+                    btnTambah.doClick();
+                } else if (tabelBuku.isFocusOwner() || btnDelete.isFocusOwner()) {
+                    btnDelete.doClick();
+                }
+            }
+        });
+
+        // Initial load
         refreshTabelBuku();
 
         // Styling untuk tabel
@@ -284,7 +310,7 @@ public class PanelBuku extends JPanel {
             return;
         }
 
-        Buku bukuBaru = new Buku(isbn, judul, pengarang);
+        Buku bukuBaru = new Buku(judul, pengarang, isbn);
         perpustakaan.tambahBuku(bukuBaru);
         JOptionPane.showMessageDialog(this, "Buku berhasil ditambahkan!");
         refreshTabelBuku();
@@ -302,7 +328,7 @@ public class PanelBuku extends JPanel {
             row.add(buku.getIsbn());
             row.add(buku.getJudul());
             row.add(buku.getPengarang());
-            row.add(!buku.isTersedia() ? "Dipinjam" : "Tersedia");
+            row.add(buku.isTersedia() ? "Tersedia" : "Dipinjam");
             tableModel.addRow(row);
         }
     }
@@ -343,12 +369,12 @@ public class PanelBuku extends JPanel {
             if (buku.getIsbn().toLowerCase().contains(searchTerm.toLowerCase()) ||
                 buku.getJudul().toLowerCase().contains(searchTerm.toLowerCase()) ||
                 buku.getPengarang().toLowerCase().contains(searchTerm.toLowerCase()) ||
-                (!buku.isTersedia() ? "Dipinjam" : "Tersedia").toLowerCase().contains(searchTerm.toLowerCase())) {
+                (buku.isTersedia() ? "Tersedia" : "Dipinjam").toLowerCase().contains(searchTerm.toLowerCase())) {
                 Vector<Object> row = new Vector<>();
                 row.add(buku.getIsbn());
                 row.add(buku.getJudul());
                 row.add(buku.getPengarang());
-                row.add(!buku.isTersedia() ? "Dipinjam" : "Tersedia");
+                row.add(buku.isTersedia() ? "Tersedia" : "Dipinjam");
                 tableModel.addRow(row);
             }
         }

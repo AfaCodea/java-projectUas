@@ -72,6 +72,7 @@ public class DashboardGUI extends JFrame {
         // File Menu
         JMenu fileMenu = new JMenu("File");
         fileMenu.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        fileMenu.setCursor(new Cursor(Cursor.HAND_CURSOR));
         JMenuItem exitMenuItem = new JMenuItem("Keluar");
         exitMenuItem.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         exitMenuItem.addActionListener(e -> System.exit(0));
@@ -81,6 +82,7 @@ public class DashboardGUI extends JFrame {
         // About Menu
         JMenu aboutMenu = new JMenu("About");
         aboutMenu.setFont(new Font("Segoe UI", Font.PLAIN, 13));
+        aboutMenu.setCursor(new Cursor(Cursor.HAND_CURSOR));
         JMenuItem aboutMenuItem = new JMenuItem("Tentang Aplikasi");
         aboutMenuItem.setFont(new Font("Segoe UI", Font.PLAIN, 13));
         aboutMenuItem.addActionListener(e -> {
