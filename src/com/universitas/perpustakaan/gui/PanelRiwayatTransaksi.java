@@ -4,13 +4,26 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
+import javax.swing.border.Border;
+import javax.swing.border.CompoundBorder;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.TitledBorder;
+import javax.swing.InputMap;
+import javax.swing.ActionMap;
+import javax.swing.KeyStroke;
+import javax.swing.AbstractAction;
 
 import com.universitas.perpustakaan.model.Peminjaman;
 import com.universitas.perpustakaan.service.Perpustakaan;
 
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.util.List;
 import java.util.Vector;
+import javax.swing.event.DocumentListener;
 
 // Renamed from PanelTransaksi to PanelRiwayatTransaksi
 public class PanelRiwayatTransaksi extends JPanel {
@@ -86,13 +99,14 @@ public class PanelRiwayatTransaksi extends JPanel {
         ));
         tablePanel.add(searchPanel, BorderLayout.NORTH);
         tablePanel.add(scrollPaneTabel, BorderLayout.CENTER);
-        
+
         // Panel untuk tombol refresh
         JPanel buttonPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         buttonPanel.setBackground(Color.WHITE);
         btnRefreshTransaksi = new JButton("Refresh Riwayat Transaksi");
         
         // Styling tombol refresh
+        btnRefreshTransaksi.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnRefreshTransaksi.setFont(new Font("Segoe UI", Font.BOLD, 13));
         btnRefreshTransaksi.setBackground(new Color(52, 152, 219));
         btnRefreshTransaksi.setForeground(Color.WHITE);
@@ -135,7 +149,7 @@ public class PanelRiwayatTransaksi extends JPanel {
         });
         
         buttonPanel.add(btnRefreshTransaksi);
-        
+
         // Action Listener untuk tombol refresh
         btnRefreshTransaksi.addActionListener(e -> {
             // Periksa dan perbarui status pengembalian buku
@@ -155,6 +169,20 @@ public class PanelRiwayatTransaksi extends JPanel {
         
         add(tablePanel, BorderLayout.CENTER);
         add(buttonPanel, BorderLayout.SOUTH);
+
+        // Add action listener for Enter key on refresh button
+        InputMap inputMap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getActionMap();
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enterRefresh");
+        actionMap.put("enterRefresh", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (btnRefreshTransaksi.isFocusOwner() || searchField.isFocusOwner()) {
+                    btnRefreshTransaksi.doClick();
+                }
+            }
+        });
 
         // Muat data awal
         refreshTabelTransaksi();
