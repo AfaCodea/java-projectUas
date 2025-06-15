@@ -100,7 +100,7 @@ Sistem ini memungkinkan pengelolaan perpustakaan universitas dengan fitur sepert
 - **Logging**: Custom logger untuk pencatatan aktivitas
 
 ## Cara Menjalankan
-1. Pastikan file `run.sh` memiliki permission eksekusi:
+1. Pastikan file `./run.sh` memiliki permission eksekusi:
    ```bash
    chmod +x run.sh
    ```
@@ -116,7 +116,8 @@ Sistem ini memungkinkan pengelolaan perpustakaan universitas dengan fitur sepert
    - Username: admin
    - Password: admin123
 
-5. Setelah login berhasil, Anda akan diarahkan ke dashboard perpustakaan, cara ini lebih praktis karen developer tidak perlu menuliskan code compile dan run secara terpisah.
+5. Setelah login berhasil, Anda akan diarahkan ke dashboard perpustakaan, cara ini lebih praktis karen
+   developer tidak perlu menuliskan code compile dan run secara terpisah.
    Pemberian Izin Eksekusi (chmod +x run.sh): Ini adalah langkah penting dan benar agar script dapat dijalankan. Menjalankan Script (./run.sh): Ini adalah cara yang benar untuk menjalankan script di sistem operasi berbasis Unix/Linux.
    Kredensial Login: Menyediakan kredensial default sangat membantu pengguna. Manfaat run.sh: Poin tentang kepraktisan dan otomatisasi kompilasi/eksekusi sangat benar.
 
