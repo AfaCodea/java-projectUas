@@ -5,6 +5,10 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.InputMap;
+import javax.swing.ActionMap;
+import javax.swing.KeyStroke;
+import javax.swing.AbstractAction;
 
 import com.universitas.perpustakaan.model.Buku;
 import com.universitas.perpustakaan.model.Mahasiswa;
@@ -13,6 +17,8 @@ import com.universitas.perpustakaan.service.Perpustakaan;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.ActionEvent;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -88,6 +94,7 @@ public class PanelPeminjaman extends JPanel {
         btnPinjam.setBorderPainted(true);
         btnPinjam.setOpaque(true);
         btnPinjam.setContentAreaFilled(true);
+        btnPinjam.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnPinjam.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createRaisedBevelBorder(),
             BorderFactory.createEmptyBorder(5, 15, 5, 15)
@@ -132,6 +139,20 @@ public class PanelPeminjaman extends JPanel {
 
         // Action Listener
         btnPinjam.addActionListener(e -> prosesPeminjamanAction());
+
+        // Add action listeners for Enter key
+        InputMap inputMap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getActionMap();
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enterPinjam");
+        actionMap.put("enterPinjam", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (comboBuku.isFocusOwner() || comboAnggota.isFocusOwner() || btnPinjam.isFocusOwner()) {
+                    btnPinjam.doClick();
+                }
+            }
+        });
 
         // Initial data load
         loadComboBoxData();

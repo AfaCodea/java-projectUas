@@ -4,11 +4,17 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.JTableHeader;
+import javax.swing.InputMap;
+import javax.swing.ActionMap;
+import javax.swing.KeyStroke;
+import javax.swing.AbstractAction;
 
 import com.universitas.perpustakaan.model.Mahasiswa;
 import com.universitas.perpustakaan.service.Perpustakaan;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.List;
@@ -65,6 +71,7 @@ public class PanelMahasiswa extends JPanel {
         btnTambah.setBorderPainted(true);
         btnTambah.setOpaque(true);
         btnTambah.setContentAreaFilled(true);
+        btnTambah.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnTambah.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createRaisedBevelBorder(),
             BorderFactory.createEmptyBorder(5, 15, 5, 15)
@@ -107,6 +114,7 @@ public class PanelMahasiswa extends JPanel {
         btnDelete.setBorderPainted(true);
         btnDelete.setOpaque(true);
         btnDelete.setContentAreaFilled(true);
+        btnDelete.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnDelete.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createRaisedBevelBorder(),
             BorderFactory.createEmptyBorder(5, 15, 5, 15)
@@ -164,7 +172,7 @@ public class PanelMahasiswa extends JPanel {
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         searchPanel.setBackground(Color.WHITE);
         
-        JLabel searchLabel = new JLabel("🔍");
+        JLabel searchLabel = new JLabel("🔍");  // Unicode search symbol
         searchLabel.setFont(new Font("Segoe UI", Font.PLAIN, 12));
         searchLabel.setForeground(new Color(100, 100, 100));
         
@@ -217,7 +225,23 @@ public class PanelMahasiswa extends JPanel {
         btnTambah.addActionListener(e -> tambahMahasiswaAction());
         btnDelete.addActionListener(e -> deleteMahasiswaAction());
 
-        // Muat data awal
+        // Add action listeners for Enter key
+        InputMap inputMap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getActionMap();
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enter");
+        actionMap.put("enter", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtId.isFocusOwner() || txtNama.isFocusOwner() || btnTambah.isFocusOwner()) {
+                    btnTambah.doClick();
+                } else if (tabelMahasiswa.isFocusOwner() || btnDelete.isFocusOwner()) {
+                    btnDelete.doClick();
+                }
+            }
+        });
+
+        // Initial load
         refreshTabelMahasiswa();
 
         // Styling untuk tabel
@@ -274,11 +298,11 @@ public class PanelMahasiswa extends JPanel {
         }
 
         if (perpustakaan.cariMahasiswaById(id) != null) {
-            JOptionPane.showMessageDialog(this, "Mahasiswa dengan ID tersebut sudah ada!", "Error", JOptionPane.ERROR_MESSAGE);
+             JOptionPane.showMessageDialog(this, "Mahasiswa dengan ID tersebut sudah ada!", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
-        Mahasiswa mahasiswaBaru = new Mahasiswa(id, nama);
+        Mahasiswa mahasiswaBaru = new Mahasiswa(nama, id);
         perpustakaan.registrasiMahasiswa(mahasiswaBaru);
         JOptionPane.showMessageDialog(this, "Mahasiswa berhasil ditambahkan!");
         refreshTabelMahasiswa();
@@ -333,10 +357,10 @@ public class PanelMahasiswa extends JPanel {
         for (Mahasiswa mahasiswa : daftarMahasiswa) {
             if (mahasiswa.getIdAnggota().toLowerCase().contains(searchTerm.toLowerCase()) ||
                 mahasiswa.getNama().toLowerCase().contains(searchTerm.toLowerCase())) {
-                Vector<Object> row = new Vector<>();
+            Vector<Object> row = new Vector<>();
                 row.add(mahasiswa.getIdAnggota());
-                row.add(mahasiswa.getNama());
-                tableModel.addRow(row);
+            row.add(mahasiswa.getNama());
+            tableModel.addRow(row);
             }
         }
     }

@@ -5,6 +5,10 @@ import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
 import javax.swing.border.TitledBorder;
+import javax.swing.InputMap;
+import javax.swing.ActionMap;
+import javax.swing.KeyStroke;
+import javax.swing.AbstractAction;
 
 import com.universitas.perpustakaan.model.Buku;
 import com.universitas.perpustakaan.service.Perpustakaan;
@@ -12,6 +16,8 @@ import com.universitas.perpustakaan.service.Perpustakaan;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.ActionEvent;
 import java.util.List;
 
 public class PanelPengembalian extends JPanel {
@@ -80,6 +86,7 @@ public class PanelPengembalian extends JPanel {
         btnKembali.setBorderPainted(true);
         btnKembali.setOpaque(true);
         btnKembali.setContentAreaFilled(true);
+        btnKembali.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnKembali.setBorder(BorderFactory.createCompoundBorder(
             BorderFactory.createRaisedBevelBorder(),
             BorderFactory.createEmptyBorder(5, 15, 5, 15)
@@ -124,6 +131,20 @@ public class PanelPengembalian extends JPanel {
 
         // Action Listener
         btnKembali.addActionListener(e -> prosesPengembalianAction());
+
+        // Add action listeners for Enter key
+        InputMap inputMap = getInputMap(WHEN_IN_FOCUSED_WINDOW);
+        ActionMap actionMap = getActionMap();
+
+        inputMap.put(KeyStroke.getKeyStroke(KeyEvent.VK_ENTER, 0), "enterKembali");
+        actionMap.put("enterKembali", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (txtIsbnUntukKembali.isFocusOwner() || btnKembali.isFocusOwner()) {
+                    btnKembali.doClick();
+                }
+            }
+        });
 
         // No initial data load needed for this panel
     }
